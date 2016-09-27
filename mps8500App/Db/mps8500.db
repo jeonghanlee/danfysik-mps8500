@@ -27,7 +27,7 @@ record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):RMT_RSTS")
   field(DESC, "Local/Remote state")
   field(DTYP, "stream")
   field(SCAN, ".5 second")
-  field(INP,  "@SYS9100.proto getRemoteMode $(HWUNIT)")
+  field(INP,  "@mps8500.proto getRemoteMode $(HWUNIT)")
   field(ONAM, "Remote")
   field(ZNAM, "Local")
 }
@@ -41,7 +41,7 @@ record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):RMT_CMD")
   field(DESC, "Local/Remote command")
   field(DTYP, "stream")
   field(SCAN, "Passive")
-  field(OUT,  "@SYS9100.proto setRemoteMode $(HWUNIT)")
+  field(OUT,  "@mps8500.proto setRemoteMode $(HWUNIT)")
   field(ONAM, "Remote")
   field(ZNAM, "Local")
 }
@@ -137,43 +137,43 @@ record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):statwd1")
   field(DTYP, "stream")
   field(SCAN, ".2 second")
   field(EGU,  "")
-  field(INP,  "@SYS9100.proto getStatusWord1 $(HWUNIT)")
+  field(INP,  "@mps8500.proto getStatusWord1 $(HWUNIT)")
   field(ADEL, "1")
 }
 
-record(transform, "_$(SYS)_$(SUB):$(DEV)_$(INST):stat_trnf")
-{
-  field(DESC, "intermediate record")
-  field(SCAN, "Passive")
-  field(PREC, "3")
+# record(transform, "_$(SYS)_$(SUB):$(DEV)_$(INST):stat_trnf")
+# {
+#   field(DESC, "intermediate record")
+#   field(SCAN, "Passive")
+#   field(PREC, "3")
 
-  field(CMTA, "Status input")
-  field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):statwd1  CP MS")
+#   field(CMTA, "Status input")
+#   field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):statwd1  CP MS")
 
-  field(CMTB, "ON bit")
-  field(CLCB, "(A & 8388608)?0:1")  # 0x800000 (bit  1)  1=off
-  field(OUTB, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_RSTS  PP MS")
+#   field(CMTB, "ON bit")
+#   field(CLCB, "(A & 8388608)?0:1")  # 0x800000 (bit  1)  1=off
+#   field(OUTB, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_RSTS  PP MS")
 
-  field(CMTC, "Summary interlock bit")
-  field(CLCC, "(A & 16384)?1:0")    # 0x004000 (bit 10)  1=intlk
-  field(OUTC, "$(SYS)_$(SUB):$(DEV)_$(INST):ILK_RSTS  PP MS")
+#   field(CMTC, "Summary interlock bit")
+#   field(CLCC, "(A & 16384)?1:0")    # 0x004000 (bit 10)  1=intlk
+#   field(OUTC, "$(SYS)_$(SUB):$(DEV)_$(INST):ILK_RSTS  PP MS")
 
-  field(CMTD, "Polarity")
-  field(CLCD, "(A & 4194304)?1:0")  # 0x400000 (bit  2)  1=normal
-  field(OUTD, "$(SYS)_$(SUB):$(DEV)_$(INST):NPOL_RSTS  PP MS")
+#   field(CMTD, "Polarity")
+#   field(CLCD, "(A & 4194304)?1:0")  # 0x400000 (bit  2)  1=normal
+#   field(OUTD, "$(SYS)_$(SUB):$(DEV)_$(INST):NPOL_RSTS  PP MS")
 
-  field(CMTE, "Fan fault")
-  field(CLCE, "(A & 64)?1:0")       # 0x000040 (bit 18)  1=fault
-  field(OUTE, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_FAN  PP MS")
+#   field(CMTE, "Fan fault")
+#   field(CLCE, "(A & 64)?1:0")       # 0x000040 (bit 18)  1=fault
+#   field(OUTE, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_FAN  PP MS")
 
-  field(CMTF, "Temp fault")
-  field(CLCF, "(A & 32)?1:0")       # 0x000020 (bit 19)  1=fault
-  field(OUTF, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_T  PP MS")
+#   field(CMTF, "Temp fault")
+#   field(CLCF, "(A & 32)?1:0")       # 0x000020 (bit 19)  1=fault
+#   field(OUTF, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_T  PP MS")
 
-  field(CMTG, "Ready")
-  field(CLCG, "(A & 2)?0:1")        # 0x000002 (bit 23)  1=not ready
-  field(OUTG, "$(SYS)_$(SUB):$(DEV)_$(INST):RDY_RSTS  PP MS")
-}
+#   field(CMTG, "Ready")
+#   field(CLCG, "(A & 2)?0:1")        # 0x000002 (bit 23)  1=not ready
+#   field(OUTG, "$(SYS)_$(SUB):$(DEV)_$(INST):RDY_RSTS  PP MS")
+# }
 
 #------------------------------------------------------------------------------
 # temperature
@@ -185,7 +185,7 @@ record(longin, "$(SYS)_$(SUB):$(DEV)_$(INST):T_RD")
   field(DTYP, "stream")
   field(SCAN, "2 second")
   field(EGU,  "degC")
-  field(INP,  "@SYS9100.proto getAD(1) $(HWUNIT)")
+  field(INP,  "@mps8500.proto getAD(1) $(HWUNIT)")
   field(ADEL, "1")
 }
 
@@ -199,7 +199,7 @@ record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rd_raw")
   field(DTYP, "stream")
   field(SCAN, ".2 second")
   field(EGU,  "1/100")
-  field(INP,  "@SYS9100.proto getAD(8) $(HWUNIT)")
+  field(INP,  "@mps8500.proto getAD(8) $(HWUNIT)")
   field(ADEL, "1")
   field(FLNK, "$(SYS)_$(SUB):$(DEV)_$(INST):I_RD_UNSC  PP NMS")
 }
@@ -225,7 +225,7 @@ record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):v_rd_raw")
   field(DTYP, "stream")
   field(SCAN, ".2 second")
   field(EGU,  "")
-  field(INP,  "@SYS9100.proto getAD(12) $(HWUNIT)")
+  field(INP,  "@mps8500.proto getAD(12) $(HWUNIT)")
   field(ADEL, "1")
   field(FLNK, "$(SYS)_$(SUB):$(DEV)_$(INST):V_RD  PP NMS")
 }
@@ -251,7 +251,7 @@ record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rset_raw")
   field(DTYP, "stream")
   field(SCAN, ".2 second")
   field(EGU,  "")
-  field(INP,  "@SYS9100.proto getDA(0) $(HWUNIT)")
+  field(INP,  "@mps8500.proto getDA(0) $(HWUNIT)")
   field(ADEL, "1")
 }
 
@@ -291,7 +291,7 @@ record(calcout, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_cset_raw")
   field(PREC, "3")
   field(CALC, "A*1000")
   field(INPA, "$(SYS)_$(SUB):$(DEV)_$(INST):I_CSET_UNSC  NPP NMS")
-  field(OUT,  "@SYS9100.proto setDA(0) $(HWUNIT)")
+  field(OUT,  "@mps8500.proto setDA(0) $(HWUNIT)")
   field(OOPT, "Every Time")
   field(ADEL, "0.01")
 }
@@ -305,7 +305,7 @@ record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_CMD")
   field(DESC, "Device on/off cmd")
   field(DTYP, "stream")
   field(SCAN, "Passive")
-  field(OUT,  "@SYS9100.proto setOnOff $(HWUNIT)")
+  field(OUT,  "@mps8500.proto setOnOff $(HWUNIT)")
   field(ONAM, "On")
   field(ZNAM, "Off")
 }
@@ -319,7 +319,7 @@ record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):RST_CMD")
   field(DESC, "Device reset cmd")
   field(DTYP, "stream")
   field(SCAN, "Passive")
-  field(OUT,  "@SYS9100.proto reset $(HWUNIT)")
+  field(OUT,  "@mps8500.proto reset $(HWUNIT)")
   field(ONAM, "Reset")
   field(ZNAM, "0")
 }
@@ -333,7 +333,7 @@ record(stringout, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_CMD")
   field(DESC, "raw command")
   field(SCAN, "Passive")
   field(DTYP, "stream")
-  field(OUT,  "@SYS9100.proto sendRawCommand $(HWUNIT)")
+  field(OUT,  "@mps8500.proto sendRawCommand $(HWUNIT)")
 }
 
 record(stringout, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_QUERY")
@@ -341,7 +341,7 @@ record(stringout, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_QUERY")
   field(DESC, "raw query")
   field(SCAN, "Passive")
   field(DTYP, "stream")
-  field(OUT, "@SYS9100.proto sendRawQuery(_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_REPLY.VAL) $(HWUNIT)")
+  field(OUT, "@mps8500.proto sendRawQuery(_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_REPLY.VAL) $(HWUNIT)")
 }
 
 record(stringin, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_REPLY")

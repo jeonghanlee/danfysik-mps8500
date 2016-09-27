@@ -35,3 +35,4 @@ EPICS_BASE=${EPICS_PATH}/epics-base
 ASYN=${EPICS_MODULES}/asyn
 STREAM=${EPICS_MODULES}/stream
 devIocStats=${EPICS_MODULES}/iocStats
+CALC=${EPICS_MODULES}/calc

@@ -31,3 +31,7 @@ EPICS_BASE=${EPICS_PATH}/epics-base
 # Set RULES here if you want to take build rules from somewhere
 # other than EPICS_BASE:
 #RULES=/path/to/epics/support/module/rules/x-y
+
+ASYN=${EPICS_MODULES}/asyn
+STREAM=${EPICS_MODULES}/stream
+devIocStats=${EPICS_MODULES}/iocStats

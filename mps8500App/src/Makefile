@@ -14,12 +14,19 @@ DBD += mps8500.dbd
 
 # mps8500.dbd will be made up from these files:
 mps8500_DBD += base.dbd
+mps8500_DBD += devIocStats.dbd
+mps8500_DBD += stream.dbd
+mps8500_DBD += asyn.dbd
+mps8500_DBD += drvAsynSerialPort.dbd
+mps8500_DBD += drvAsynIPPort.dbd
 
 # Include dbd files from all support applications:
 #mps8500_DBD += xxx.dbd
 
 # Add all the support libraries needed by this IOC
 #mps8500_LIBS += xxx
+mps8500_LIBS += stream asyn
+mps8500_LIBS += devIocStats
 
 # mps8500_registerRecordDeviceDriver.cpp derives from mps8500.dbd
 mps8500_SRCS += mps8500_registerRecordDeviceDriver.cpp

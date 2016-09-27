@@ -1,0 +1,33 @@
+#!../../bin/linux-x86_64/mps8500
+
+## You may have to change mps8500 to something else
+## everywhere it appears in this file
+
+< envPaths
+
+
+epicsEnvSet("STREAM_PROTOCOL_PATH", ".:${TOP}/db")
+
+
+cd "${TOP}"
+
+## Register all support components
+dbLoadDatabase "dbd/mps8500.dbd"
+mps8500_registerRecordDeviceDriver pdbbase
+
+
+drvAsynIPPortConfigure("MPS8500", "127.0.0.1:9999", 0, 0, 0)
+
+
+## Load record instances
+#dbLoadRecords("db/xxx.db","user=jhlee")
+
+dbLoadRecords("db/iocAdminSoft.db",  "IOC=KAM:IOC")
+dbLoadRecords("db/mps8500.db", "SYS=KAM,SUB=MPS,DEV=8500,INST=1,PORT=MPS8500")
+$(SYS)_$(SUB):$(DEV)_$(INST):
+
+cd "${TOP}/iocBoot/${IOC}"
+iocInit
+
+## Start any sequence programs
+#seq sncxxx,"user=jhlee"

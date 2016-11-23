@@ -20,9 +20,7 @@ drvAsynIPPortConfigure("MPS8500", "127.0.0.1:9999", 0, 0, 0)
 
 
 ## Load record instances
-#dbLoadRecords("db/xxx.db","user=jhlee")
-
-dbLoadRecords("db/iocAdminSoft.db",  "IOC=KAM:IOC")
+dbLoadRecords("db/iocAdminSoft.db",  "IOC=KAM-MPS:IOC")
 dbLoadRecords("db/mps8500.db", "SYS=KAM,SUB=MPS,DEV=8500,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
 
 

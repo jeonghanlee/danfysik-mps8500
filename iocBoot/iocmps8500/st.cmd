@@ -14,7 +14,13 @@ dbLoadDatabase "dbd/mps8500.dbd"
 mps8500_registerRecordDeviceDriver pdbbase
 
 
-# We will use the MOXA NPort 6650-8 
+# We will use the MOXA NPort 6650-8
+# const char *portName,
+# const char *hostInfo,
+# unsigned int priority : EPICS thread priority for asyn port driver 0=default
+# int noAutoConnect,
+# int noProcessEos
+
 drvAsynIPPortConfigure "MPS8500", "127.0.0.1:9999", 0, 0, 0
 asynOctetSetInputEos   "MPS8500", 0, "\n\r"
 asynOctetSetOutputEos  "MPS8500", 0, "\r"

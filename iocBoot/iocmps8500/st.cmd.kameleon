@@ -16,6 +16,12 @@ cd "${TOP}"
 dbLoadDatabase "dbd/mps8500.dbd"
 mps8500_registerRecordDeviceDriver pdbbase
 
+# const char *portName,
+# const char *hostInfo,
+# unsigned int priority : EPICS thread priority for asyn port driver 0=default
+# int noAutoConnect,
+# int noProcessEos
+
 drvAsynIPPortConfigure "MPS8500", "127.0.0.1:9999", 0, 0, 0
 asynOctetSetInputEos   "MPS8500", 0, "\n\r"
 

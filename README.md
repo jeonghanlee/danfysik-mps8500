@@ -140,3 +140,6 @@ jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_
 
 ## License
 * https://www.gnu.org/licenses/gpl-2.0.txt 
+
+# Acknowledgement
+A special word of thanks goes to John Priller, who provided the FRIB SYS9000 DB and protocol files. 

@@ -14,10 +14,10 @@
 #
 #----------------------------------------------------------------------
 
-#Terminator = LF CR;
-
-OutTerminator = CR;
-InTerminator = LF CR;
+# Move out the Terminators' definition in st.cmd
+#
+# OutTerminator = CR;
+# InTerminator = LF CR;
     
 ReplyTimeout = 1000;
 ReadTimeout  = 300;

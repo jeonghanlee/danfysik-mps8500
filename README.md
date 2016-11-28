@@ -72,8 +72,8 @@ dbLoadDatabase "dbd/mps8500.dbd"
 mps8500_registerRecordDeviceDriver pdbbase
 drvAsynIPPortConfigure("MPS8500", "127.0.0.1:9999", 0, 0, 0)
 ## Load record instances
-dbLoadRecords("db/iocAdminSoft.db",  "IOC=KAM-MPS:IOC")
-dbLoadRecords("db/mps8500.db", "SYS=KAM,SUB=MPS,DEV=8500,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
+dbLoadRecords("db/iocAdminSoft.db",  "IOC=8500:IocStat")
+dbLoadRecords("db/mps8500.db", "SYSDEV=8500:MPS,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
 cd "/home/jhlee/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500"
 iocInit
 Starting iocInit
@@ -84,9 +84,59 @@ Starting iocInit
 iocRun: All initialization complete
 ## Start any sequence programs
 #seq sncxxx,"user=jhlee"
+dbl > "/home/jhlee/epics_env/epics-Apps/danfysik-mps8500/iocmps8500_PVs.list"
+epics>
+
+```
+### caget script
+```
+jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_PVs.list "8500:MPS"
+8500:MPS:RMT_CMD               Remote
+8500:MPS:RLOC_RSTS             
+8500:MPS:Clock                 16,22,47,28,11,2016
+8500:MPS:RLOC_CMD              
+8500:MPS:RMT_RSTS              Remote
 ```
 
+```
+jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_PVs.list
+8500:IocStat:CA_UPD_TIME       15
+8500:IocStat:FD_UPD_TIME       20
+8500:IocStat:LOAD_UPD_TIME     10
+8500:IocStat:MEM_UPD_TIME      10
+8500:IocStat:FD_FREE           65527
+8500:IocStat:READACF           0
+8500:IocStat:SYSRESET          0
+8500:IocStat:SysReset          0
+8500:IocStat:ACCESS            Running
+8500:MPS:RMT_CMD               Remote
+8500:IocStat:GTIM_RESET        Reset
+8500:MPS:RLOC_RSTS             
+8500:IocStat:HEARTBEAT         54
+8500:IocStat:START_CNT         1
+8500:IocStat:CA_CLNT_CNT       1
+8500:IocStat:CA_CONN_CNT       1
+8500:IocStat:CPU_CNT           8
+8500:IocStat:FD_CNT            9
+8500:IocStat:FD_MAX            65536
+8500:IocStat:GTIM_TIME         8.49195e+08
+8500:IocStat:IOC_CPU_LOAD      0
+8500:IocStat:LOAD              0
+8500:IocStat:MEM_FREE          1.3051e+10
+8500:IocStat:MEM_MAX           2.52313e+10
+8500:IocStat:MEM_USED          7.1721e+06
+8500:IocStat:PARENT_ID         15613
+8500:IocStat:PROCESS_ID        13961
+8500:IocStat:RECORD_CNT        64
+8500:IocStat:SUSP_TASK_CNT     0
+8500:IocStat:SYS_CPU_LOAD      3.9037
+8500:IocStat:APP_DIR2          ik-mps8500/iocBoot/iocmps8500
+8500:IocStat:CA_ADDR_LIST      194.47.240.7
+....
+....
+....
 
+```
 
 ## License
 * https://www.gnu.org/licenses/gpl-2.0.txt 

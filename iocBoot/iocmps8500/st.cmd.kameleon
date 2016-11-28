@@ -20,12 +20,14 @@ drvAsynIPPortConfigure("MPS8500", "127.0.0.1:9999", 0, 0, 0)
 
 
 ## Load record instances
-dbLoadRecords("db/iocAdminSoft.db",  "IOC=KAM-MPS:IOC")
-dbLoadRecords("db/mps8500.db", "SYS=KAM,SUB=MPS,DEV=8500,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
-
+dbLoadRecords("db/iocAdminSoft.db",  "IOC=8500:IocStat")
+dbLoadRecords("db/mps8500.db", "SYSDEV=8500:MPS,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit
 
 ## Start any sequence programs
 #seq sncxxx,"user=jhlee"
+
+
+dbl > "${TOP}/${IOC}_PVs.list"

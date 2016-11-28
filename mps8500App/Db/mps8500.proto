@@ -1,16 +1,73 @@
 #----------------------------------------------------------------------
 #
 #  StreamDevice protocol file for a reading/setting selected elements
-#  from a Danfysik SYS-9100 power supply
+#  from a Danfysik SYS-8500 power supply
 #
+#  started from  J.Priller's SYS9100.proto
 #  2016-08-01  J.Priller  original version
+#
+#
+#  author : Jeong Han Lee
+#  email  : jeonghan.lee@gmail.com
+#  Date   : 
+#  version : 0.0.1
 #
 #----------------------------------------------------------------------
 
-Terminator = LF CR;
+#Terminator = LF CR;
 
-ReplyTimeout = 4000;
-ReadTimeout  = 1000;
+OutTerminator = CR;
+InTerminator = LF CR;
+    
+ReplyTimeout = 1000;
+ReadTimeout  = 300;
+
+#----------------------------------------------------------------------
+# $(SYSDEV):Clock
+# 
+readClock 
+{
+    out "CLOCK";
+    in  "%s";
+    ExtraInput = Ignore;
+}
+
+#----------------------------------------------------------------------
+# $(SYSDEV):RMT_RSTS
+#
+getRemoteMode {
+    out "CMD";
+    in "%{LOC|REM}";
+    ExtraInput = Ignore;
+}
+
+#----------------------------------------------------------------------
+# $(SYSDEV):RMT_CM
+#
+setRemoteMode {
+    out "%{LOC|REM}";
+    @init {getRemoteMode;}
+}
+
+# ----------------------------------------------------------------------
+# $(SYSDEV):RLOC_CMD ($(SYSDEV):RLOC_RSTS) 
+#
+setRemLock {
+    out "RLOCK";
+    in "%(\$1.VAL)39c"      
+}
+
+
+debug {
+    ExtraInput = Ignore;
+    out "%s"; in "%39c"
+}
+
+
+
+
+
+
 #----------------------------------------------------------------------
 # get raw status word (6-byte hex)
 #
@@ -54,18 +111,8 @@ setDA {
   out "DA \$1 %d";
 }
 
-#----------------------------------------------------------------------
-# get local/remote
-getRemoteMode {
-  out "CMDSTATE";
-  in "%{LOCAL|REMOTE}";
-}
 
-#----------------------------------------------------------------------
-# set local/remote
-setRemoteMode {
-  out "%{LOC|REM}";
-}
+
 
 #----------------------------------------------------------------------
 # send a raw command

@@ -1,358 +1,445 @@
 #
-# Danfysik SYS-9100 power supply
+# Danfysik SYSTEM MPS 8500 power supply
 #
 # macros required:
 #
 #  HWUNIT              : dev asyn channel name
-#  SYS, SUB, DEV, INST : FRIB name components
-#  MIN                 : for DRVL
-#  MAX                 : for DRVH
+#  SYSDEV              : Quite generic single name component
+# 
+#
+#  started from  J.Priller's SYS9100.db
+#  2016-08-01  J.Priller  original version
+#
+#  author : Jeong Han Lee
+#  email  : jeonghan.lee@gmail.com
+#  Date   : 
+#  version : 0.0.1
 #
 
 #------------------------------------------------------------------------------
-# asyn record for HW unit
-#------------------------------------------------------------------------------
-record(asyn, "_$(SYS)_$(SUB):$(DEV)_$(INST):ps_asyn")
+# CLOCK
+# 
+# 
+record(stringin, "$(SYSDEV):Clock") 
 {
-  field(DESC, "asyn record")
-  field(PORT, "$(HWUNIT)")
+    field(DESC, "The internal clock time")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto readClock $(HWUNIT)")
+    field(SCAN, "1 second")
 }
 
+
+
+
 #------------------------------------------------------------------------------
-# local/remote status
+#
+# LOC : switch the line-in-command to the local line
+# REM : switch the line-in-command to the remote line
+#
+# CMD and CMDSTATE have the different outputs, the first attempt to use CMD
+# instead of CMDSTATE. However, in case we have to use CMDSTATE, select
+# MBBO/MBBI other than BO/BI
+#
 #------------------------------------------------------------------------------
 
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):RMT_RSTS")
+
+record(mbbo, "$(SYSDEV):RMT_CMD") 
 {
-  field(DESC, "Local/Remote state")
-  field(DTYP, "stream")
-  field(SCAN, ".5 second")
-  field(INP,  "@mps8500.proto getRemoteMode $(HWUNIT)")
-  field(ONAM, "Remote")
-  field(ZNAM, "Local")
+    field(DESC, "Remote Interface Mode")
+    field(DTYP, "stream")
+    field(OUT,  "@mps8500.proto setRemoteMode $(HWUNIT)")
+    field(ZRST, "Local")
+    field(ZRVL, "0")
+    field(ONST, "Remote")
+    field(ONVL, "1")
+    field(TWST, "INVALID")
+    field(THSV, "INVALID")
+    field(FRSV, "INVALID")
+    field(FVSV, "INVALID")
+    field(SXSV, "INVALID")
+    field(SVSV, "INVALID")
+    field(EISV, "INVALID")
+    field(NISV, "INVALID")
+    field(TESV, "INVALID")
+    field(ELSV, "INVALID")
+    field(TVSV, "INVALID")
+    field(TTSV, "INVALID")
+    field(FTSV, "INVALID")
+    field(FTSV, "INVALID")
+    field(FFSV, "INVALID")
+    field(UNSV, "INVALID")
+    field(IVOA, "Don't drive outputs")
+    field(FLNK, "$(SYSDEV):RMT_RSTS")
 }
 
-#------------------------------------------------------------------------------
-# local/remote command
-#------------------------------------------------------------------------------
-
-record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):RMT_CMD")
+# CMD
+#      REM
+#      LOC
+#      error message
+# 
+# CMDSTATE
+#      REMOTE
+#      LOCAL
+#      LOCK
+#      error message
+#
+record(mbbi, "$(SYSDEV):RMT_RSTS") 
 {
-  field(DESC, "Local/Remote command")
-  field(DTYP, "stream")
-  field(SCAN, "Passive")
-  field(OUT,  "@mps8500.proto setRemoteMode $(HWUNIT)")
-  field(ONAM, "Remote")
-  field(ZNAM, "Local")
+    field(DESC, "Remote Interface Mode Status")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getRemoteMode $(HWUNIT)")
+    field(ZRST, "Local")
+    field(ZRVL, "0")
+    field(ONST, "Remote")
+    field(ONVL, "1")
+    field(TWST, "INVALID")
+    field(THSV, "INVALID")
+    field(FRSV, "INVALID")
+    field(FVSV, "INVALID")
+    field(SXSV, "INVALID")
+    field(SVSV, "INVALID")
+    field(EISV, "INVALID")
+    field(NISV, "INVALID")
+    field(TESV, "INVALID")
+    field(ELSV, "INVALID")
+    field(TVSV, "INVALID")
+    field(TTSV, "INVALID")
+    field(FTSV, "INVALID")
+    field(FTSV, "INVALID")
+    field(FFSV, "INVALID")
+    field(UNSV, "INVALID")
+    field(PINI, "YES")
 }
 
-#------------------------------------------------------------------------------
-# on status
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_RSTS")
+# ----------------------------------------------------------
+# RLOCK
+# 
+# No way to get RLOCK state, so use the Soft Channel to keep
+# their messages 
+# ----------------------------------------------------------
+record(stringin, "$(SYSDEV):RLOC_CMD")
 {
-  field(DESC, "On/Off status")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "On")
-  field(ZNAM, "Off")
+    field(DESC, "Lock the line-in command to the remote")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto setRemLock($(SYSDEV):RLOC_RSTS) $(HWUNIT)")
 }
 
-#------------------------------------------------------------------------------
-# ready status
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):RDY_RSTS")
+record (stringout, "$(SYSDEV):RLOC_RSTS")
 {
-  field(DESC, "Ready status")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "Ready")
-  field(ZNAM, "NotReady")
+    field(DESC, "RLOCK Answer and Errors Status")
+    field(DTYP, "Soft Channel")
 }
+    
 
-#------------------------------------------------------------------------------
-# interlock status
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):ILK_RSTS")
-{
-  field(DESC, "Interlock status")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "Interlock")
-  field(ZNAM, "Okay")
-}
-
-#------------------------------------------------------------------------------
-# polarity status
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):NPOL_RSTS")
-{
-  field(DESC, "Output voltage reading")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "Normal")
-  field(ZNAM, "Reversed")
-}
-
-#------------------------------------------------------------------------------
-# fan fault
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_FAN")
-{
-  field(DESC, "Fan fault")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "Fault")
-  field(ZNAM, "Okay")
-}
-
-#------------------------------------------------------------------------------
-# temperature fault
-# (filled in by status word transform record)
-#------------------------------------------------------------------------------
-
-record(bi, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_T")
-{
-  field(DESC, "Temperature fault")
-  field(DTYP, "Soft Channel")
-  field(SCAN, "Passive")
-  field(ONAM, "Fault")
-  field(ZNAM, "Okay")
-}
-
-#------------------------------------------------------------------------------
-# status word
-#------------------------------------------------------------------------------
-
-record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):statwd1")
-{
-  field(DESC, "raw status word 1")
-  field(DTYP, "stream")
-  field(SCAN, ".2 second")
-  field(EGU,  "")
-  field(INP,  "@mps8500.proto getStatusWord1 $(HWUNIT)")
-  field(ADEL, "1")
-}
-
-# record(transform, "_$(SYS)_$(SUB):$(DEV)_$(INST):stat_trnf")
+# #------------------------------------------------------------------------------
+# # on status
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
+# record(bi, "$(SYSDEV):ON_RSTS")
 # {
-#   field(DESC, "intermediate record")
+#   field(DESC, "On/Off status")
+#   field(DTYP, "Soft Channel")
 #   field(SCAN, "Passive")
-#   field(PREC, "3")
-
-#   field(CMTA, "Status input")
-#   field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):statwd1  CP MS")
-
-#   field(CMTB, "ON bit")
-#   field(CLCB, "(A & 8388608)?0:1")  # 0x800000 (bit  1)  1=off
-#   field(OUTB, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_RSTS  PP MS")
-
-#   field(CMTC, "Summary interlock bit")
-#   field(CLCC, "(A & 16384)?1:0")    # 0x004000 (bit 10)  1=intlk
-#   field(OUTC, "$(SYS)_$(SUB):$(DEV)_$(INST):ILK_RSTS  PP MS")
-
-#   field(CMTD, "Polarity")
-#   field(CLCD, "(A & 4194304)?1:0")  # 0x400000 (bit  2)  1=normal
-#   field(OUTD, "$(SYS)_$(SUB):$(DEV)_$(INST):NPOL_RSTS  PP MS")
-
-#   field(CMTE, "Fan fault")
-#   field(CLCE, "(A & 64)?1:0")       # 0x000040 (bit 18)  1=fault
-#   field(OUTE, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_FAN  PP MS")
-
-#   field(CMTF, "Temp fault")
-#   field(CLCF, "(A & 32)?1:0")       # 0x000020 (bit 19)  1=fault
-#   field(OUTF, "$(SYS)_$(SUB):$(DEV)_$(INST):FLT_RSTS_T  PP MS")
-
-#   field(CMTG, "Ready")
-#   field(CLCG, "(A & 2)?0:1")        # 0x000002 (bit 23)  1=not ready
-#   field(OUTG, "$(SYS)_$(SUB):$(DEV)_$(INST):RDY_RSTS  PP MS")
+#   field(ONAM, "On")
+#   field(ZNAM, "Off")
 # }
 
-#------------------------------------------------------------------------------
-# temperature
-#------------------------------------------------------------------------------
+# #------------------------------------------------------------------------------
+# # ready status
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
+# record(bi, "$(SYSDEV):RDY_RSTS")
+# {
+#   field(DESC, "Ready status")
+#   field(DTYP, "Soft Channel")
+#   field(SCAN, "Passive")
+#   field(ONAM, "Ready")
+#   field(ZNAM, "NotReady")
+# }
 
-record(longin, "$(SYS)_$(SUB):$(DEV)_$(INST):T_RD")
-{
-  field(DESC, "Temperature")
-  field(DTYP, "stream")
-  field(SCAN, "2 second")
-  field(EGU,  "degC")
-  field(INP,  "@mps8500.proto getAD(1) $(HWUNIT)")
-  field(ADEL, "1")
-}
+# #------------------------------------------------------------------------------
+# # interlock status
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
+# record(bi, "$(SYSDEV):ILK_RSTS")
+# {
+#   field(DESC, "Interlock status")
+#   field(DTYP, "Soft Channel")
+#   field(SCAN, "Passive")
+#   field(ONAM, "Interlock")
+#   field(ZNAM, "Okay")
+# }
 
-#------------------------------------------------------------------------------
-# current reading
-#------------------------------------------------------------------------------
+# #------------------------------------------------------------------------------
+# # polarity status
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
 
-record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rd_raw")
-{
-  field(DESC, "Output current reading")
-  field(DTYP, "stream")
-  field(SCAN, ".2 second")
-  field(EGU,  "1/100")
-  field(INP,  "@mps8500.proto getAD(8) $(HWUNIT)")
-  field(ADEL, "1")
-  field(FLNK, "$(SYS)_$(SUB):$(DEV)_$(INST):I_RD_UNSC  PP NMS")
-}
+# record(bi, "$(SYSDEV):NPOL_RSTS")
+# {
+#   field(DESC, "Output voltage reading")
+#   field(DTYP, "Soft Channel")
+#   field(SCAN, "Passive")
+#   field(ONAM, "Normal")
+#   field(ZNAM, "Reversed")
+# }
 
-record(calc, "$(SYS)_$(SUB):$(DEV)_$(INST):I_RD")
-{
-  field(DESC, "Output current reading")
-  field(SCAN, "Passive")
-  field(PREC, "3")
-  field(EGU,  "A")
-  field(CALC, "A/100")
-  field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rd_raw  NPP MS")
-  field(ADEL, "0.1")
-}
+# #------------------------------------------------------------------------------
+# # fan fault
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
-# voltage reading
-#------------------------------------------------------------------------------
+# record(bi, "$(SYSDEV):FLT_RSTS_FAN")
+# {
+#   field(DESC, "Fan fault")
+#   field(DTYP, "Soft Channel")
+#   field(SCAN, "Passive")
+#   field(ONAM, "Fault")
+#   field(ZNAM, "Okay")
+# }
 
-record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):v_rd_raw")
-{
-  field(DESC, "Output voltage reading raw")
-  field(DTYP, "stream")
-  field(SCAN, ".2 second")
-  field(EGU,  "")
-  field(INP,  "@mps8500.proto getAD(12) $(HWUNIT)")
-  field(ADEL, "1")
-  field(FLNK, "$(SYS)_$(SUB):$(DEV)_$(INST):V_RD  PP NMS")
-}
+# #------------------------------------------------------------------------------
+# # temperature fault
+# # (filled in by status word transform record)
+# #------------------------------------------------------------------------------
 
-record(calc, "$(SYS)_$(SUB):$(DEV)_$(INST):V_RD")
-{
-  field(DESC, "Output voltage reading")
-  field(SCAN, "Passive")
-  field(PREC, "2")
-  field(EGU,  "V")
-  field(CALC, "A/10")
-  field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):v_rd_raw  NPP MS")
-  field(ADEL, "0.1")
-}
+# record(bi, "$(SYSDEV):FLT_RSTS_T")
+# {
+#   field(DESC, "Temperature fault")
+#   field(DTYP, "Soft Channel")
+#   field(SCAN, "Passive")
+#   field(ONAM, "Fault")
+#   field(ZNAM, "Okay")
+# }
 
-#------------------------------------------------------------------------------
-# current setting readback
-#------------------------------------------------------------------------------
+# #------------------------------------------------------------------------------
+# # status word
+# #------------------------------------------------------------------------------
 
-record(longin, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rset_raw")
-{
-  field(DESC, "Current set readback, raw")
-  field(DTYP, "stream")
-  field(SCAN, ".2 second")
-  field(EGU,  "")
-  field(INP,  "@mps8500.proto getDA(0) $(HWUNIT)")
-  field(ADEL, "1")
-}
+# record(longin, "_$(SYSDEV):statwd1")
+# {
+#   field(DESC, "raw status word 1")
+#   field(DTYP, "stream")
+#   field(SCAN, ".2 second")
+#   field(EGU,  "")
+#   field(INP,  "@mps8500.proto getStatusWord1 $(HWUNIT)")
+#   field(ADEL, "1")
+# }
 
-record(calc, "$(SYS)_$(SUB):$(DEV)_$(INST):I_RSET")
-{
-  field(DESC, "Current set readback")
-  field(SCAN, "Passive")
-  field(EGU,  "A")
-  field(PREC, "3")
-  field(CALC, "A/1000.0")
-  field(INPA, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_rset_raw  CP MS")
-  field(ADEL, "0.01")
-}
+# # record(transform, "_$(SYSDEV):stat_trnf")
+# # {
+# #   field(DESC, "intermediate record")
+# #   field(SCAN, "Passive")
+# #   field(PREC, "3")
 
-#------------------------------------------------------------------------------
-# current setting
-#------------------------------------------------------------------------------
+# #   field(CMTA, "Status input")
+# #   field(INPA, "_$(SYSDEV):statwd1  CP MS")
 
-record(ao, "$(SYS)_$(SUB):$(DEV)_$(INST):I_CSET")
-{
-  field(DESC, "Current setting")
-  field(SCAN, "Passive")
-  field(EGU,  "A")
-  field(PREC, "3")
-  field(DRVL, "$(MIN)")
-  field(DRVH, "$(MAX)")
-  field(ADEL, "0.01")
-  field(FLNK, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_cset_raw")
-}
+# #   field(CMTB, "ON bit")
+# #   field(CLCB, "(A & 8388608)?0:1")  # 0x800000 (bit  1)  1=off
+# #   field(OUTB, "$(SYSDEV):ON_RSTS  PP MS")
 
-record(calcout, "_$(SYS)_$(SUB):$(DEV)_$(INST):i_cset_raw")
-{
-  field(DESC, "Current setting, raw")
-  field(DTYP, "stream")
-  field(SCAN, "Passive")
-  field(EGU,  "")
-  field(PREC, "3")
-  field(CALC, "A*1000")
-  field(INPA, "$(SYS)_$(SUB):$(DEV)_$(INST):I_CSET_UNSC  NPP NMS")
-  field(OUT,  "@mps8500.proto setDA(0) $(HWUNIT)")
-  field(OOPT, "Every Time")
-  field(ADEL, "0.01")
-}
+# #   field(CMTC, "Summary interlock bit")
+# #   field(CLCC, "(A & 16384)?1:0")    # 0x004000 (bit 10)  1=intlk
+# #   field(OUTC, "$(SYSDEV):ILK_RSTS  PP MS")
 
-#------------------------------------------------------------------------------
-# device on command
-#------------------------------------------------------------------------------
+# #   field(CMTD, "Polarity")
+# #   field(CLCD, "(A & 4194304)?1:0")  # 0x400000 (bit  2)  1=normal
+# #   field(OUTD, "$(SYSDEV):NPOL_RSTS  PP MS")
 
-record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):ON_CMD")
-{
-  field(DESC, "Device on/off cmd")
-  field(DTYP, "stream")
-  field(SCAN, "Passive")
-  field(OUT,  "@mps8500.proto setOnOff $(HWUNIT)")
-  field(ONAM, "On")
-  field(ZNAM, "Off")
-}
+# #   field(CMTE, "Fan fault")
+# #   field(CLCE, "(A & 64)?1:0")       # 0x000040 (bit 18)  1=fault
+# #   field(OUTE, "$(SYSDEV):FLT_RSTS_FAN  PP MS")
 
-#------------------------------------------------------------------------------
-# device reset command
-#------------------------------------------------------------------------------
+# #   field(CMTF, "Temp fault")
+# #   field(CLCF, "(A & 32)?1:0")       # 0x000020 (bit 19)  1=fault
+# #   field(OUTF, "$(SYSDEV):FLT_RSTS_T  PP MS")
 
-record(bo, "$(SYS)_$(SUB):$(DEV)_$(INST):RST_CMD")
-{
-  field(DESC, "Device reset cmd")
-  field(DTYP, "stream")
-  field(SCAN, "Passive")
-  field(OUT,  "@mps8500.proto reset $(HWUNIT)")
-  field(ONAM, "Reset")
-  field(ZNAM, "0")
-}
+# #   field(CMTG, "Ready")
+# #   field(CLCG, "(A & 2)?0:1")        # 0x000002 (bit 23)  1=not ready
+# #   field(OUTG, "$(SYSDEV):RDY_RSTS  PP MS")
+# # }
+
+# #------------------------------------------------------------------------------
+# # temperature
+# #------------------------------------------------------------------------------
+
+# record(longin, "$(SYSDEV):T_RD")
+# {
+#   field(DESC, "Temperature")
+#   field(DTYP, "stream")
+#   field(SCAN, "2 second")
+#   field(EGU,  "degC")
+#   field(INP,  "@mps8500.proto getAD(1) $(HWUNIT)")
+#   field(ADEL, "1")
+# }
+
+# #------------------------------------------------------------------------------
+# # current reading
+# #------------------------------------------------------------------------------
+
+# record(longin, "_$(SYSDEV):i_rd_raw")
+# {
+#   field(DESC, "Output current reading")
+#   field(DTYP, "stream")
+#   field(SCAN, ".2 second")
+#   field(EGU,  "1/100")
+#   field(INP,  "@mps8500.proto getAD(8) $(HWUNIT)")
+#   field(ADEL, "1")
+#   field(FLNK, "$(SYSDEV):I_RD_UNSC  PP NMS")
+# }
+
+# record(calc, "$(SYSDEV):I_RD")
+# {
+#   field(DESC, "Output current reading")
+#   field(SCAN, "Passive")
+#   field(PREC, "3")
+#   field(EGU,  "A")
+#   field(CALC, "A/100")
+#   field(INPA, "_$(SYSDEV):i_rd_raw  NPP MS")
+#   field(ADEL, "0.1")
+# }
+
+# #------------------------------------------------------------------------------
+# # voltage reading
+# #------------------------------------------------------------------------------
+
+# record(longin, "_$(SYSDEV):v_rd_raw")
+# {
+#   field(DESC, "Output voltage reading raw")
+#   field(DTYP, "stream")
+#   field(SCAN, ".2 second")
+#   field(EGU,  "")
+#   field(INP,  "@mps8500.proto getAD(12) $(HWUNIT)")
+#   field(ADEL, "1")
+#   field(FLNK, "$(SYSDEV):V_RD  PP NMS")
+# }
+
+# record(calc, "$(SYSDEV):V_RD")
+# {
+#   field(DESC, "Output voltage reading")
+#   field(SCAN, "Passive")
+#   field(PREC, "2")
+#   field(EGU,  "V")
+#   field(CALC, "A/10")
+#   field(INPA, "_$(SYSDEV):v_rd_raw  NPP MS")
+#   field(ADEL, "0.1")
+# }
+
+# #------------------------------------------------------------------------------
+# # current setting readback
+# #------------------------------------------------------------------------------
+
+# record(longin, "_$(SYSDEV):i_rset_raw")
+# {
+#   field(DESC, "Current set readback, raw")
+#   field(DTYP, "stream")
+#   field(SCAN, ".2 second")
+#   field(EGU,  "")
+#   field(INP,  "@mps8500.proto getDA(0) $(HWUNIT)")
+#   field(ADEL, "1")
+# }
+
+# record(calc, "$(SYSDEV):I_RSET")
+# {
+#   field(DESC, "Current set readback")
+#   field(SCAN, "Passive")
+#   field(EGU,  "A")
+#   field(PREC, "3")
+#   field(CALC, "A/1000.0")
+#   field(INPA, "_$(SYSDEV):i_rset_raw  CP MS")
+#   field(ADEL, "0.01")
+# }
+
+# #------------------------------------------------------------------------------
+# # current setting
+# #------------------------------------------------------------------------------
+
+# record(ao, "$(SYSDEV):I_CSET")
+# {
+#   field(DESC, "Current setting")
+#   field(SCAN, "Passive")
+#   field(EGU,  "A")
+#   field(PREC, "3")
+#   field(DRVL, "$(MIN)")
+#   field(DRVH, "$(MAX)")
+#   field(ADEL, "0.01")
+#   field(FLNK, "_$(SYSDEV):i_cset_raw")
+# }
+
+# record(calcout, "_$(SYSDEV):i_cset_raw")
+# {
+#   field(DESC, "Current setting, raw")
+#   field(DTYP, "stream")
+#   field(SCAN, "Passive")
+#   field(EGU,  "")
+#   field(PREC, "3")
+#   field(CALC, "A*1000")
+#   field(INPA, "$(SYSDEV):I_CSET_UNSC  NPP NMS")
+#   field(OUT,  "@mps8500.proto setDA(0) $(HWUNIT)")
+#   field(OOPT, "Every Time")
+#   field(ADEL, "0.01")
+# }
+
+# #------------------------------------------------------------------------------
+# # device on command
+# #------------------------------------------------------------------------------
+
+# record(bo, "$(SYSDEV):ON_CMD")
+# {
+#   field(DESC, "Device on/off cmd")
+#   field(DTYP, "stream")
+#   field(SCAN, "Passive")
+#   field(OUT,  "@mps8500.proto setOnOff $(HWUNIT)")
+#   field(ONAM, "On")
+#   field(ZNAM, "Off")
+# }
+
+# #------------------------------------------------------------------------------
+# # device reset command
+# #------------------------------------------------------------------------------
+
+# record(bo, "$(SYSDEV):RST_CMD")
+# {
+#   field(DESC, "Device reset cmd")
+#   field(DTYP, "stream")
+#   field(SCAN, "Passive")
+#   field(OUT,  "@mps8500.proto reset $(HWUNIT)")
+#   field(ONAM, "Reset")
+#   field(ZNAM, "0")
+# }
 
 #------------------------------------------------------------------------------
 # test command/query interface
 #------------------------------------------------------------------------------
 
-record(stringout, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_CMD")
-{
-  field(DESC, "raw command")
-  field(SCAN, "Passive")
-  field(DTYP, "stream")
-  field(OUT,  "@mps8500.proto sendRawCommand $(HWUNIT)")
-}
+# record(stringout, "_$(SYSDEV):RAW_CMD")
+# {
+#   field(DESC, "raw command")
+#   field(SCAN, "Passive")
+#   field(DTYP, "stream")
+#   field(OUT,  "@mps8500.proto sendRawCommand $(HWUNIT)")
+# }
 
-record(stringout, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_QUERY")
-{
-  field(DESC, "raw query")
-  field(SCAN, "Passive")
-  field(DTYP, "stream")
-  field(OUT, "@mps8500.proto sendRawQuery(_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_REPLY.VAL) $(HWUNIT)")
-}
+# record(stringout, "_$(SYSDEV):RAW_QUERY")
+# {
+#   field(DESC, "raw query")
+#   field(SCAN, "Passive")
+#   field(DTYP, "stream")
+#   field(OUT, "@mps8500.proto sendRawQuery(_$(SYSDEV):RAW_REPLY.VAL) $(HWUNIT)")
+# }
 
-record(stringin, "_$(SYS)_$(SUB):$(DEV)_$(INST):RAW_REPLY")
-{
-  field(DESC, "raw query reply")
-  field(SCAN, "Passive")
-  field(DTYP, "Soft Channel")
-}
+# record(stringin, "_$(SYSDEV):RAW_REPLY")
+# {
+#   field(DESC, "raw query reply")
+#   field(SCAN, "Passive")
+#   field(DTYP, "Soft Channel")
+# }
 
 #------------------------------------------------------------------------------
 # END
 #------------------------------------------------------------------------------
+
+
 
 

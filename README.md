@@ -1,6 +1,8 @@
 # danfysik-mps8500
 This is the extremely slow-developing-repository for the Danfysik Magenet Power Supply 8500. The work is based on the shoulder of the FRIB 9100 work. 
 
+* http://www.danfysik.com/media/1179/user-manual-sys8500.pdf
+* http://www.danfysik.com/media/1182/software-manual-sys8500.pdf
 
 ## Working Environment or Requirements
 
@@ -140,3 +142,13 @@ jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_
 
 ## License
 * https://www.gnu.org/licenses/gpl-2.0.txt 
+
+# Reference
+There are three PSU based on System 8500, maybe more. 
+
+* http://www.danfysik.com/media/1098/model-854-datasheet.pdf
+* http://www.danfysik.com/media/1233/model-858-datasheet.pdf
+* http://www.danfysik.com/media/1099/model-859-datasheet.pdf
+
+# Acknowledgement
+A special word of thanks goes to John Priller, who provided the FRIB SYS9100 DB and protocol files. 

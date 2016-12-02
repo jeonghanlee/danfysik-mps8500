@@ -36,7 +36,7 @@ asynOctetSetOutputEos  "MPS8500", 0, "\r\n"
 
 ## Load record instances
 dbLoadRecords "db/iocAdminSoft.db",  "IOC=8500:IocStat"
-dbLoadRecords "db/mps8500.db",       "SYSDEV=8500:MPS:,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500"
+dbLoadRecords "db/mps8500.vdb",       "SYSDEV=8500:MPS:,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500"
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit

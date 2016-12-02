@@ -22,15 +22,8 @@
 ReplyTimeout = 1000;
 ReadTimeout  = 300;
 
-#----------------------------------------------------------------------
-# $(SYSDEV):Clock
-# 
-readClock 
-{
-    out "CLOCK";
-    in  "%s";
-    ExtraInput = Ignore;
-}
+
+
 
 #----------------------------------------------------------------------
 # $(SYSDEV):RMT_RSTS
@@ -46,6 +39,8 @@ getRemoteMode {
 #
 setRemoteMode {
     out "%{LOC|REM}";
+    in "%(\$1.VAL)39c";
+       ExtraInput = Ignore;
     @init {getRemoteMode;}
 }
 
@@ -54,7 +49,27 @@ setRemoteMode {
 #
 setRemLock {
     out "RLOCK";
-    in "%(\$1.VAL)39c"      
+    in "%(\$1.VAL)39c";      
+}
+
+sendCmd {
+    out "\$1";
+}
+
+sendVal {
+    out "\$1 \$2";
+}
+
+
+# Any scaler value
+#  string:  getVal(ID,s) will send "ID?" and expect "%s".
+getVal {
+    out "\$1";
+    in "%\$2";
+}
+
+setVal {
+	out "\$1 %\$2";
 }
 
 
@@ -64,16 +79,17 @@ debug {
 }
 
 
+#%(\1)39c
 
-
+#%(\$1Serial.VAL)39[^,]
 
 
 #----------------------------------------------------------------------
 # get raw status word (6-byte hex)
 #
 getStatusWord1 {
-  out "S1H";
-  in "%06X";
+    out "S1H";
+    in "%06X";
 }
 
 #----------------------------------------------------------------------

@@ -140,6 +140,51 @@ jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_
 
 ```
 
+```
+jhlee@kaffee: danfysik-mps8500 (master)$  bash scripts/caget_mbbi.bash 8500:MPS:S1-bit1_sts
+8500:MPS:S1-bit1_sts.B0        0
+8500:MPS:S1-bit1_sts.B1        0
+8500:MPS:S1-bit1_sts.B2        0
+8500:MPS:S1-bit1_sts.B3        0
+8500:MPS:S1-bit1_sts.B4        0
+8500:MPS:S1-bit1_sts.B5        0
+8500:MPS:S1-bit1_sts.B6        0
+8500:MPS:S1-bit1_sts.B7        0
+8500:MPS:S1-bit1_sts.B8        0
+8500:MPS:S1-bit1_sts.B9        0
+8500:MPS:S1-bit1_sts.BA        0
+8500:MPS:S1-bit1_sts.BB        0
+8500:MPS:S1-bit1_sts.BC        0
+8500:MPS:S1-bit1_sts.BD        0
+8500:MPS:S1-bit1_sts.BE        0
+8500:MPS:S1-bit1_sts.BF        0
+
+jhlee@kaffee: ~$ caput _8500:MPS:RAW_QUERY "SETBIT 0x00000F"
+Old : _8500:MPS:RAW_QUERY            SETBIT 0x00F000
+New : _8500:MPS:RAW_QUERY            SETBIT 0x00000F
+jhlee@kaffee: ~$ 
+
+jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_mbbi.bash 8500:MPS:S1-bit1_sts
+8500:MPS:S1-bit1_sts.B0        1
+8500:MPS:S1-bit1_sts.B1        1
+8500:MPS:S1-bit1_sts.B2        1
+8500:MPS:S1-bit1_sts.B3        1
+8500:MPS:S1-bit1_sts.B4        0
+8500:MPS:S1-bit1_sts.B5        0
+8500:MPS:S1-bit1_sts.B6        0
+8500:MPS:S1-bit1_sts.B7        0
+8500:MPS:S1-bit1_sts.B8        0
+8500:MPS:S1-bit1_sts.B9        0
+8500:MPS:S1-bit1_sts.BA        0
+8500:MPS:S1-bit1_sts.BB        0
+8500:MPS:S1-bit1_sts.BC        0
+8500:MPS:S1-bit1_sts.BD        0
+8500:MPS:S1-bit1_sts.BE        0
+8500:MPS:S1-bit1_sts.BF        0
+jhlee@kaffee: danfysik-mps8500 (master)$ 
+
+```
+
 ## License
 * https://www.gnu.org/licenses/gpl-2.0.txt 
 

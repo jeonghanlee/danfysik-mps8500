@@ -31,6 +31,65 @@ record(stringin, "$(SYSDEV)Clock") {
   field(SCAN, "1 second")
 }
 
+
+#------------------------------------------------------------------------------
+# ID (P20)
+#
+#
+record(stringin, "$(SYSDEV)ID-Sts1") {
+    field(DESC, "User Setable IDs")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getId($(SYSDEV)ID-Sts2,$(SYSDEV)ID-Sts3,$(SYSDEV)ID-Sts4)  $(HWUNIT)")
+    field(FLNK, "$(SYSDEV)VER-Sts1")
+    field(PINI, "YES")
+}
+record(stringin, "$(SYSDEV)ID-Sts2") {
+    field(DESC, "User Setable IDs")
+    field(DTYP, "Soft Channel")
+}
+record(stringin, "$(SYSDEV)ID-Sts3") {
+    field(DESC, "User Setable IDs")
+    field(DTYP, "Soft Channel")
+}
+record(stringin, "$(SYSDEV)ID-Sts4") {
+    field(DESC, "User Setable IDs")
+    field(DTYP, "Soft Channel")
+}
+#------------------------------------------------------------------------------
+# VER (P49)
+#
+#
+
+record(stringin, "$(SYSDEV)VER-Sts1") {
+    field(DESC, "Program and its version")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getVer($(SYSDEV)VER-Sts2,$(SYSDEV)VER-Sts3)  $(HWUNIT)")
+    field(FLNK, "$(SYSDEV)PRINT-Sts1")
+}
+record(stringin, "$(SYSDEV)VER-Sts2") {
+    field(DESC, "Program and its version")
+    field(DTYP, "Soft Channel")
+}
+record(stringin, "$(SYSDEV)VER-Sts3") {
+    field(DESC, "Program and its version")
+    field(DTYP, "Soft Channel")
+}
+
+#------------------------------------------------------------------------------
+# PRINT (P27)
+# 
+# 
+record(stringin, "$(SYSDEV)PRINT-Sts1") {
+    field(DESC, "SYSTEM Type and its version")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getPrint($(SYSDEV)PRINT_Sts2) $(HWUNIT)")
+}
+record(stringin, "$(SYSDEV)PRINT_Sts2") {
+    field(DESC, "SYSTEM Type and its version")
+    field(DTYP, "Soft Channel")
+}
+
+
 #------------------------------------------------------------------------------
 #
 # LOC : switch the line-in-command to the local line
@@ -214,10 +273,6 @@ record(mbbi, "$(SYSDEV)S1-bit2_desc") {
   field(UNSV, "INVALID")
 }
 
-# record(mbbiDirect, "$(SYSDEV)S1-2sts_") {
-#     field(DESC, "Status 1 HEX Set2")
-#     field(SHFT, 4)
-# }
 # #------------------------------------------------------------------------------
 # # temperature
 # #------------------------------------------------------------------------------
@@ -325,18 +380,7 @@ record(mbbi, "$(SYSDEV)S1-bit2_desc") {
 #   field(OOPT, "Every Time")
 #   field(ADEL, "0.01")
 # }
-# #------------------------------------------------------------------------------
-# # device on command
-# #------------------------------------------------------------------------------
-# record(bo, "$(SYSDEV)ON_CMD")
-# {
-#   field(DESC, "Device on/off cmd")
-#   field(DTYP, "stream")
-#   field(SCAN, "Passive")
-#   field(OUT,  "@mps8500.proto setOnOff $(HWUNIT)")
-#   field(ONAM, "On")
-#   field(ZNAM, "Off")
-# }
+
 # #------------------------------------------------------------------------------
 # # device reset command
 # #------------------------------------------------------------------------------

@@ -73,6 +73,28 @@ setVal {
 }
 
 
+getId {
+    out "ID";
+    in "%63c";
+    in "%(\$1.VAL)63c";
+    in "%(\$2.VAL)63c";
+    in "%(\$3.VAL)63c";
+}
+
+
+getVer {
+    out "VER";
+    in "%23c";
+    in "%(\$1.VAL)23c";
+    in "%(\$2.VAL)23c";
+}
+
+getPrint {
+    out "PRINT";
+    in "%15c";
+    in "%(\$1.VAL)15c";
+}
+
 debug {
     ExtraInput = Ignore;
     out "%s"; in "%39c"

@@ -31,7 +31,7 @@ ReadTimeout  = 300;
 getRemoteMode {
     out "CMD";
     in "%{LOC|REM}";
-    ExtraInput = Ignore;
+#    ExtraInput = Ignore;
 }
 
 #----------------------------------------------------------------------
@@ -39,8 +39,8 @@ getRemoteMode {
 #
 setRemoteMode {
     out "%{LOC|REM}";
-    in "%(\$1.VAL)39c";
-       ExtraInput = Ignore;
+    in "%(\$1.VAL)s";
+#       ExtraInput = Ignore;
     @init {getRemoteMode;}
 }
 

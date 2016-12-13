@@ -335,6 +335,7 @@ record(bi, "$(SYSDEV)PowerSwitch_RSTS")
 # Update PowerSwitch_CMD automatically, based on PowerSwitch_RSTS
 # One will see how it works, after rebooting IOC while HW is
 # running well.
+# Reference : Michael Davidsaver sr725 db
 
 record(longout, "$(SYSDEV)PowerSwitch_RSTS_")
 {

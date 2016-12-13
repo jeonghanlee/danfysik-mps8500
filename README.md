@@ -92,12 +92,36 @@ epics>
 ```
 ### caget script
 ```
-jhlee@kaffee: danfysik-mps8500 (master)$ bash scripts/caget_pvs.bash iocmps8500_PVs.list "8500:MPS"
-8500:MPS:RMT_CMD               Remote
-8500:MPS:RLOC_RSTS             
-8500:MPS:Clock                 16,22,47,28,11,2016
-8500:MPS:RLOC_CMD              
+jhlee@kaffee: scripts (master)$  bash caget_pvs.bash ../iocmps8500_PVs.list "MPS"
 8500:MPS:RMT_RSTS              Remote
+8500:MPS:S1-bit1_desc          Spare
+8500:MPS:S1-bit2_desc          DC Overload
+_8500:MPS:S1-1sts_             0
+_8500:MPS:S1-2sts_             1024
+8500:MPS:RMT_CMD               Remote
+8500:MPS:PowerSwitch_RSTS      on
+8500:MPS:RB_                   0
+8500:MPS:RLOC_STS              
+8500:MPS:RMT_STS               
+_8500:MPS:RAW_CMD              
+_8500:MPS:RAW_QUERY            
+8500:MPS:S1-bit1_sts           0
+8500:MPS:S1-bit2_sts           1024
+8500:MPS:S1-sts_               4194304
+8500:MPS:Clock                 13,42,12,13,12,2016
+8500:MPS:ID-Sts1               SYSTEM 8500 TYP 859H
+8500:MPS:ID-Sts2               1250A / 400V
+8500:MPS:ID-Sts3               SW VER WCC114
+8500:MPS:ID-Sts4               ID 1234567890
+8500:MPS:PRINT-Sts1            SYSTEM 8500
+8500:MPS:PRINT_Sts2            V1.0A
+8500:MPS:RLOC_CMD              
+8500:MPS:VER-Sts1              Copyright DANFYSIK A/S
+8500:MPS:VER-Sts2              RAMTEX Engineering Aps
+8500:MPS:VER-Sts3              SCC V1.13 Aug 10 2008
+_8500:MPS:RAW_REPLY            
+8500:MPS:PowerSwitch_CMD       on
+8500:MPS:RST_CMD
 ```
 
 ```

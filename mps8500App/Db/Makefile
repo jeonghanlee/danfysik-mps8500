@@ -12,7 +12,7 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #DB += xxx.db
 
-DB += mps8500.vdb
+DB += mps8500.db
 DB_INSTALLS += $(TOP)/mps8500App/Db/mps8500.proto
 DB_INSTALLS += $(devIocStats)/db/iocAdminSoft.db
 

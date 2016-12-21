@@ -10,13 +10,11 @@ This is the extremely slow-developing-repository for the Danfysik Magenet Power 
 
 * ASYN-4-29 
 
-* STREAM  791e7c0
+* STREAM : 791e7c0
 
-* devIocStats 82988fd 
+* devIocStats : 82988fd 
 
-* Simulator
-
-I am developing and also using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
+* Simulator : I am developing and also using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
 
 
 ## Commands and Dir Structure
@@ -42,8 +40,7 @@ jhlee@kaffee: kameleon (master)$ tree -L 2
     └── [jhlee    4.0K]  template
 
 13 directories, 2 files
-```
-```
+
 jhlee@kaffee: kameleon (master)$ python kameleon.py --host="127.0.0.1" --file=simulators/danfysik_mps8500/mps8500.kam
 
 ****************************************************
@@ -79,7 +76,8 @@ jhlee@kaffee: kameleon (master)$ ./mps8500.sh
 
 ### EPICS IOC
 
-```jhlee@kaffee:~/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500 (master)$ ./st.kameloen.cmd 
+```
+jhlee@kaffee:~/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500 (master)$ ./st.kameloen.cmd 
 #!../../bin/linux-x86_64/mps8500
 #  author : Jeong Han Lee
 #  email  : jeonghan.lee@gmail.com

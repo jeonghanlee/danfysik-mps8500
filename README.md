@@ -15,7 +15,7 @@ This is the extremely slow-developing-repository for the Danfysik Magenet Power 
 * devIocStats 82988fd 
 
 * Simulator
-Currently, I am using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
+At the same time, I am developing and also using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
 
 
 ## Commands and Dir Structure
@@ -41,7 +41,8 @@ jhlee@kaffee: kameleon (master)$ tree -L 2
     └── [jhlee    4.0K]  template
 
 13 directories, 2 files
-
+```
+```
 jhlee@kaffee: kameleon (master)$ python kameleon.py --host="127.0.0.1" --file=simulators/danfysik_mps8500/mps8500.kam
 
 ****************************************************
@@ -57,13 +58,32 @@ jhlee@kaffee: kameleon (master)$ python kameleon.py --host="127.0.0.1" --file=si
 [11:02:38.139] Start serving from hostname '127.0.0.1' at port '9999'.
 ```
 
-### EPICS IOC
+```
+jhlee@kaffee: kameleon (master)$ ./mps8500.sh 
+
+****************************************************
+*                                                  *
+*  Kameleon v1.4.0 (2016/DEC/02 - Development)     *
+*                                                  *
+*                                                  *
+*  (C) 2015-2016 European Spallation Source (ESS)  *
+*                                                  *
+****************************************************
+
+[17:42:56.116] Using file 'simulators/danfysik_mps8500/mps8500.kam' (contains 26 commands and 26 statuses).
+[17:42:56.116] Start serving from any hostname that the machine has at port '9999'.
 
 ```
-jhlee@kaffee:~/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500 (master)$ ./st.cmd.kameleon 
+
+
+### EPICS IOC
+
+```jhlee@kaffee:~/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500 (master)$ ./st.kameloen.cmd 
 #!../../bin/linux-x86_64/mps8500
-## You may have to change mps8500 to something else
-## everywhere it appears in this file
+#  author : Jeong Han Lee
+#  email  : jeonghan.lee@gmail.com
+#  Date   : 
+#  version : 0.0.1
 < envPaths
 epicsEnvSet("IOC","iocmps8500")
 epicsEnvSet("TOP","/home/jhlee/epics_env/epics-Apps/danfysik-mps8500")
@@ -72,10 +92,23 @@ cd "/home/jhlee/epics_env/epics-Apps/danfysik-mps8500"
 ## Register all support components
 dbLoadDatabase "dbd/mps8500.dbd"
 mps8500_registerRecordDeviceDriver pdbbase
-drvAsynIPPortConfigure("MPS8500", "127.0.0.1:9999", 0, 0, 0)
+# const char *portName,
+# const char *hostInfo,
+# unsigned int priority : EPICS thread priority for asyn port driver 0=default
+# int noAutoConnect,
+# int noProcessEos
+drvAsynIPPortConfigure "MPS8500", "127.0.0.1:9999", 0, 0, 0
+asynOctetSetInputEos   "MPS8500", 0, "\n\r"
+#
+# asynOctetSetOutputEos "MPS8500", 0, "\r"
+#
+# "\r\n" is only valid for the simulator
+# , because we want to use Telnet connection also.
+#
+asynOctetSetOutputEos  "MPS8500", 0, "\r\n"
 ## Load record instances
-dbLoadRecords("db/iocAdminSoft.db",  "IOC=8500:IocStat")
-dbLoadRecords("db/mps8500.db", "SYSDEV=8500:MPS,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500")
+dbLoadRecords "db/iocAdminSoft.db",  "IOC=8500:IocStat"
+dbLoadRecords "db/mps8500.db",       "SYSDEV=8500:MPS:,INST=1,MAX=100,MIN=0,HWUNIT=MPS8500"
 cd "/home/jhlee/epics_env/epics-Apps/danfysik-mps8500/iocBoot/iocmps8500"
 iocInit
 Starting iocInit
@@ -90,25 +123,26 @@ dbl > "/home/jhlee/epics_env/epics-Apps/danfysik-mps8500/iocmps8500_PVs.list"
 epics>
 
 ```
+
 ### caget script
 ```
 jhlee@kaffee: scripts (master)$  bash caget_pvs.bash ../iocmps8500_PVs.list "MPS"
 8500:MPS:RMT_RSTS              Remote
 8500:MPS:S1-bit1_desc          Spare
 8500:MPS:S1-bit2_desc          DC Overload
-_8500:MPS:S1-1sts_             0
-_8500:MPS:S1-2sts_             1024
+_8500:MPS:S1-1sts_             2
+_8500:MPS:S1-2sts_             3105
 8500:MPS:RMT_CMD               Remote
-8500:MPS:PowerSwitch_RSTS      on
-8500:MPS:RB_                   0
+8500:MPS:PowerSwitch_RSTS      off
+8500:MPS:RB_                   1
 8500:MPS:RLOC_STS              
 8500:MPS:RMT_STS               
 _8500:MPS:RAW_CMD              
 _8500:MPS:RAW_QUERY            
-8500:MPS:S1-bit1_sts           0
-8500:MPS:S1-bit2_sts           1024
-8500:MPS:S1-sts_               4194304
-8500:MPS:Clock                 13,42,12,13,12,2016
+8500:MPS:S1-bit1_sts           2
+8500:MPS:S1-bit2_sts           3105
+8500:MPS:S1-sts_               12718082
+8500:MPS:Clock                 17,43,58,21,12,2016
 8500:MPS:ID-Sts1               SYSTEM 8500 TYP 859H
 8500:MPS:ID-Sts2               1250A / 400V
 8500:MPS:ID-Sts3               SW VER WCC114
@@ -120,8 +154,9 @@ _8500:MPS:RAW_QUERY
 8500:MPS:VER-Sts2              RAMTEX Engineering Aps
 8500:MPS:VER-Sts3              SCC V1.13 Aug 10 2008
 _8500:MPS:RAW_REPLY            
-8500:MPS:PowerSwitch_CMD       on
-8500:MPS:RST_CMD
+8500:MPS:PowerSwitch_CMD       off
+8500:MPS:RST_CMD               
+
 ```
 
 ```

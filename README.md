@@ -15,7 +15,8 @@ This is the extremely slow-developing-repository for the Danfysik Magenet Power 
 * devIocStats 82988fd 
 
 * Simulator
-At the same time, I am developing and also using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
+
+I am developing and also using the simulator in https://bitbucket.org/jeonghanlee/kameleon, was forked from https://bitbucket.org/europeanspallationsource/kameleon, in order to develop the basic EPICS IOC based on the FRIB 9100 db and proto files. ESS might use the Danfysik MPS 8500 in the Raster Scanning Magent Power Supplies. 
 
 
 ## Commands and Dir Structure

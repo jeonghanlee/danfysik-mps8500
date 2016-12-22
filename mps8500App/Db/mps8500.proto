@@ -140,13 +140,13 @@ reset {
 # get a DA value
 getDA {
   out "DA \$1";
-  in "\$1 %d";
+  in "%d";
 }
 
 #----------------------------------------------------------------------
 # set a DA value
 setDA {
-  out "DA \$1 %d";
+  out "DA \$1,%d";
 }
 
 

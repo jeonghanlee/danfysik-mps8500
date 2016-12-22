@@ -362,6 +362,227 @@ record(bo, "$(SYSDEV)RST_CMD")
     field(FLNK, "$(SYSDEV)S1-sts_")
 }
 
+# Page 13/14/15 DAC have 5 channels that have the following meanings
+# Set
+# DA 0,xxx (WA) output_current in ppm
+# DA 1,xxx (W1) Slew rate through 8 bit optional port (added to HW)
+# DA 2,xxx (W2) Optional
+# DA 3,xxx (W3) Slew rate through 8 bit optional port scaled to mA/sec
+# DA 4,xxx      Slew rate through 12 bit serial DAC (From SW version SC5110)
+# ----------------------------------------------------------------------------
+# Get
+# DA 0     (RA) read the currently numerical set value in ppm resolution. 
+#               0 <= DA 0 <= 999999, PO gives its polarity status
+#               DA 0 will deliver the present polarity status automatically. 
+#               Currently DA 0 and PO works indepently with each other in this simulator
+#               
+# DA 1     (R1) Slew rate through 8 bit optional port (added to HW)
+# DA 2     (R2) Optional
+#               0 <= DA {1,2} <= 255 from option port {0,1}.
+#               The optional port 0 is normally used for the SLEW-DAC port (HW conrolled
+#               slew rate circuit
+#               The optional port 1 is for extension use
+# DA 3     (R3) read an absolute value between 0 and 1550 from option port 0 (SLEW-DAC)
+#               Similar to R1, and this value is interpreted to mA/sec slew rate setting
+#               The scaling can be adjusted via Esc<AD command also
+#               
+# DA 4          Slew rate through 12 bit serial DAC (From SW version SC5110)
+#
+
+# DA 0
+# Should consider PO and unipolar and bipolar configuration properly later.
+#
+record(ao, "$(SYSDEV)DAC0_SET")
+{
+    field(DESC, "DAC0 Set")
+    field(DTYP, "stream")
+    field( OUT, "@mps8500.proto setDA(0) $(HWUNIT)")
+    field(DRVL, "-999999")
+    field(DRVH, "+999999")
+    field( EGU, "ppm")
+    field(FLNK, "$(SYSDEV)DAC0_RB")
+}
+
+record(ai, "$(SYSDEV)DAC0_RB")
+{
+    field(DESC, "DAC0 Readback")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getDA(0) $(HWUNIT)")
+    field( EGU, "ppm")
+    field(PINI, "YES")
+    field(FLNK, "$(SYSDEV)DAC0Update-RB_")
+}
+
+record(longout, "$(SYSDEV)DAC0Update-RB_")
+{
+    field( DOL, "$(SYSDEV)DAC0_RB NPP")
+    field(OMSL, "closed_loop")
+    field( OUT, "$(SYSDEV)DAC0_SET NPP")
+}
+
+# DA 1
+#
+record(ao, "$(SYSDEV)DAC1_SET")
+{
+    field(DESC, "Set Slew Rate Port0")
+    field(DTYP, "stream")
+    field( OUT, "@mps8500.proto setDA(1) $(HWUNIT)")
+    field(DRVL, "0")
+    field(DRVH, "255")
+    field(FLNK, "$(SYSDEV)DAC1_RB")
+}
+
+record(ai, "$(SYSDEV)DAC1_RB")
+{
+    field(DESC, "Read Slew Rate Port0")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getDA(1) $(HWUNIT)")
+    field(PINI, "YES")
+    field(FLNK, "$(SYSDEV)DAC1Update-RB_")
+}
+
+record(longout, "$(SYSDEV)DAC1Update-RB_")
+{
+    field( DOL, "$(SYSDEV)DAC1_RB NPP")
+    field(OMSL, "closed_loop")
+    field( OUT, "$(SYSDEV)DAC1_SET NPP")
+}
+
+# DA 2
+#
+record(ao, "$(SYSDEV)DAC2_SET")
+{
+    field(DESC, "Set Slew Rate Port1")
+    field(DTYP, "stream")
+    field( OUT, "@mps8500.proto setDA(2) $(HWUNIT)")
+    field(DRVL, "0")
+    field(DRVH, "255")
+    field(FLNK, "$(SYSDEV)DAC2_RB")
+}
+
+record(ai, "$(SYSDEV)DAC2_RB")
+{
+    field(DESC, "Read Slew Rate Port1")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getDA(2) $(HWUNIT)")
+    field(PINI, "YES")
+    field(FLNK, "$(SYSDEV)DAC2Update-RB_")
+}
+
+record(longout, "$(SYSDEV)DAC2Update-RB_")
+{
+    field( DOL, "$(SYSDEV)DAC2_RB NPP")
+    field(OMSL, "closed_loop")
+    field( OUT, "$(SYSDEV)DAC2_SET NPP")
+}
+
+
+# DA 3
+# Max value depends on the scaling factor.
+# Chaning the scaling factor, "Esc"<AD command will
+# be used.
+# But here I am using the fixed and default value
+# defined in P28 (R3)
+#
+record(ao, "$(SYSDEV)DAC3_SET")
+{
+    field(DESC, "Set Ramp Speed mA/s")
+    field(DTYP, "stream")
+    field( OUT, "@mps8500.proto setDA(3) $(HWUNIT)")
+    field(DRVL, "0")
+    field(DRVH, "1550.4")
+    field( EGU, "mA/s")
+    field(FLNK, "$(SYSDEV)DAC3_RB")
+}
+
+record(ai, "$(SYSDEV)DAC3_RB")
+{
+    field(DESC, "Read Ramp Speed mA/s")
+    field(DTYP, "stream")
+    field( INP, "@mps8500.proto getDA(3) $(HWUNIT)")
+    field(PINI, "YES")
+    field( EGU, "mA/s")
+    field(FLNK, "$(SYSDEV)DAC3Update-RB_")
+}
+
+record(longout, "$(SYSDEV)DAC3Update-RB_")
+{
+    field( DOL, "$(SYSDEV)DAC3_RB NPP")
+    field(OMSL, "closed_loop")
+    field( OUT, "$(SYSDEV)DAC3_SET NPP")
+}
+
+# We don't impletment DAC 4, because we don't know which SW version
+# will be used.
+# Thursday, December 22 17:43:51 CET 2016, jhlee
+#
+# DA 4
+# Slew Rate through 12 bit serial DAC (From SW version SCS110)
+#
+# record(ao, "$(SYSDEV)DAC4_SET")
+# {
+#     field(DESC, "Set Slew Rate 12bit")
+#     field(DTYP, "stream")
+#     field( OUT, "@mps8500.proto setDA(4) $(HWUNIT)")
+#     field(FLNK, "$(SYSDEV)DAC4_RB")
+# }
+#
+# record(ai, "$(SYSDEV)DAC4_RB")
+# {
+#     field(DESC, "Read Slew Rate 12bit")
+#     field(DTYP, "stream")
+#     field( INP, "@mps8500.proto getDA(4) $(HWUNIT)")
+#     field(FLNK, "$(SYSDEV)DAC4Update-RB_")
+# }
+
+# record(longout, "$(SYSDEV)DAC4Update-RB_")
+# {
+#     field( DOL, "$(SYSDEV)DAC4_RB NPP")
+#     field(OMSL, "closed_loop")
+#     field( OUT, "$(SYSDEV)DAC4_SET NPP")
+# }
+
+
+
+
+# the following logics will be used in AD instead of DA...
+#
+# record(ao, "$(SYSDEV)DAC0_SET")
+# {
+#     field(DESC, "Set Output Current")
+#     field(DTYP, "stream")
+#     field( OUT, "@mps8500.proto setDA(0) $(HWUNIT)")
+#     field(DRVL, "-999999")
+#     field(DRVH, "999999")
+#     field( EGU, "ppm")
+#     field(FLNK, "$(SYSDEV)DAC0_RB_")
+# }
+
+
+# record(ai, "$(SYSDEV)DAC0_RB_") {
+#     field(DESC, "Read Raw Output Current")
+#     field(DTYP, "stream")
+#     field( INP, "@mps8500.proto getDA(0) $(HWUNIT)")
+#     field(DRVL, "-999999")
+#     field(DRVH, "999999")
+#     field(PINI, "YES")
+#     field(FLNK, "$(SYSDEV)DAC0_RB")
+# }
+
+# record(calc, "$(SYSDEV)DAC0_RB") {
+#     field(CALC, "(A/100)")
+#     field(INPA, "$(SYSDEV)DAC0_RB_ NPP MS")
+#     field(FLNK, "$(SYSDEV)DAC0Update-RB_")
+# }
+
+# record(longout, "$(SYSDEV)DAC0Update-RB_")
+# {
+#     field( DOL, "$(SYSDEV)DAC0_RB_ NPP")
+#     field(OMSL, "closed_loop")
+#     field( OUT, "$(SYSDEV)DAC0_SET NPP")
+# }
+
+
 # #------------------------------------------------------------------------------
 # # temperature
 # #------------------------------------------------------------------------------

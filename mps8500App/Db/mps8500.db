@@ -328,7 +328,7 @@ record(bi, "$(SYSDEV)PowerSwitch_RSTS")
     field( INP, "$(SYSDEV)S1-bit2_sts.BB CPP")
     field(ZNAM, "on")
     field(ONAM, "off")
-    field(FLNK, "$(SYSDEV)RPowerSwitch_RSTS_")
+    field(FLNK, "$(SYSDEV)PowerSwitch_RSTS_")
 }
 
 #

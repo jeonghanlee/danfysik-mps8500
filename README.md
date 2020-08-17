@@ -1,4 +1,8 @@
 # danfysik-mps8500
+
+**Since Danfysik changed their control interface, so this repository isn't valid anymore. Please don't use this epics ioc for MPS 8500 model**
+
+
 This is the extremely slow-developing-repository for the Danfysik Magenet Power Supply 8500. The work is based on the shoulder of the FRIB 9100 work. 
 
 * http://www.danfysik.com/media/1179/user-manual-sys8500.pdf
